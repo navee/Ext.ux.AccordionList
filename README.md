@@ -90,3 +90,5 @@ You will need to run the tests from a web server because XHR's cannot be made fr
 
 Copyright (c) 2013 KAWANO Shinobu. This software is licensed under the MIT License.
 
+test
+

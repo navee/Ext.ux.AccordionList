@@ -232,6 +232,37 @@ Ext.define('AccordionListExample.view.Main', {
                         }
                     }
                 }
+            },
+            {
+                title: 'AsyncLoad',
+                iconCls: 'team',
+                layout: 'vbox',
+                items: [
+                    {
+                        xtype: 'accordionlist',
+                        store: Ext.create('AccordionListExample.store.AsyncTask'),
+                        flex: 1,
+                        itemId: 'task',
+                        asyncLoad:true,
+                        listeners: {
+                            initialize: function() {
+                                this.load();
+                            }
+                        }
+                    }
+                ],
+                control: {
+                    'button[action=expand]': {
+                        tap: function() {
+                            this.down('accordionlist').doAllExpand();
+                        }
+                    },
+                     'button[action=collapse]': {
+                        tap: function() {
+                            this.down('accordionlist').doAllCollapse();
+                        }
+                    }
+                }
             }
         ]
     }

@@ -1,0 +1,18 @@
+{
+    "items" : [{
+                "text" : "Node1",
+                "leaf":false
+            }, {
+                "text" : "Node2",
+                "leaf":false
+            }, {
+                "text" : "Node3",
+                "leaf" : true
+            }, {
+                "text" : "Node4",
+                "leaf" : true
+            }, {
+                "text" : "Node5",
+                "leaf" : true
+            }]
+}

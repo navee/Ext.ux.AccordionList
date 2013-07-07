@@ -211,7 +211,19 @@ Ext.define('Ext.ux.AccordionList', {
          * @cfg {Object} listConfig
          * Sets list's config.
          */
-        listConfig: null
+        listConfig: null,
+        
+        /**
+         * @cfg {Boolean}
+         * whether asynchronous load the list 
+         */
+        asyncLoad:false, 
+        
+        /**
+         * @private
+         * storage the asynchronous store
+         */
+        asyncLoadStore:null
     },
 
     /**
@@ -230,6 +242,11 @@ Ext.define('Ext.ux.AccordionList', {
         var me = this;
         if (me.getDefaultExpanded()) {
             me.doAllExpand();
+        }
+        //create asynchronous store
+        if (me.getAsyncLoad()){
+        	me.getStore().setFolderSort(true);
+        	me.createAsyncLoadStore();
         }
     },
 
@@ -504,7 +521,15 @@ Ext.define('Ext.ux.AccordionList', {
                 if(me.getSingleMode()) {
                     me.doAllCollapseWithSingleMode(record.data.depth);
                 }
-                node.expand();
+                if(me.getAsyncLoad()){
+                	if(node.get("loaded")){
+                		node.expand();
+                	}else{
+                		me.loadChildrenNodes(node);
+                	}
+                }else{
+                	node.expand();
+                }
             }
         }
     },
@@ -649,6 +674,37 @@ Ext.define('Ext.ux.AccordionList', {
             }, 500, this);
         }
         return store;
-    }
+    },
+    /**
+     * @private
+     * create asynchronous load stroe
+     */
+    createAsyncLoadStore:function(){
+    	var listStore = this.getStore();
+    	var asyncLoadStore = Ext.create(("Ext.data.TreeStore"),listStore.getInitialConfig());
+    	this.setAsyncLoadStore(asyncLoadStore);
+    },
+    /**
+     * @private
+     * load the children nodes
+     */
+    loadChildrenNodes:function(node){
+    	var me = this;
+    	var listStore = me.getStore();
+    	var childrenLoadStore = me.getAsyncLoadStore();
+    	childrenLoadStore.load({
+    		params:{
+    			code:node.get("code")
+    		},
+    		callback:function(records){
+    			node.beginEdit();
+	            node.set('loading', false);
+                listStore.fillNode(node, records);
+                node.endEdit();
+                me.onListRefresh(me.getList());
+                node.expand();
+    		}
+    	});
+    },
 
 });
